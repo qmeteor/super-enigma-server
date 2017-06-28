@@ -8,13 +8,21 @@ const bcrypt = require('bcrypt-nodejs');
 
 // Define our model
 const userSchema = new Schema({
-    username: String,  //username is constructed of first and last name but can be mutated to be anything after signup.
-    firstName: String,
-    lastName: String,
-    email: { type: String, unique: true, lowercase: true },
-    password: String,
-    vanityURL: { type: String, unique: true, lowercase: true },
-    profileImageURL: String
+    local: {
+        username: String,  //username is constructed of first and last name but can be mutated to be anything after signup.
+        firstName: String,
+        lastName: String,
+        email: {type: String, unique: true, lowercase: true},
+        password: String,
+        vanityURL: {type: String, unique: true, lowercase: true},
+        profileImageURL: String
+    },
+    facebook: {
+        id: String,
+        token: String,
+        email: String,
+        name: String
+    }
 });
 
 // On Save Hook, encrypt password
@@ -28,11 +36,11 @@ userSchema.pre('save', function(next) {
         if(err) { return next(err); }
 
         // encrypt our password using the salt
-        bcrypt.hash(user.password, salt, null, function(err, hash) {
+        bcrypt.hash(user.local.password, salt, null, function(err, hash) {
             if(err) { return next(err); }
 
             // overwrite plain text password with encrypted password
-            user.password = hash;
+            user.local.password = hash;
             next();
         });
     });

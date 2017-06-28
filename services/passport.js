@@ -7,9 +7,41 @@ const config = require('../config');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const LocalStrategy = require('passport-local');
+const FacebookStrategy = require('passport-facebook').Strategy;
+
+// Facebook strategy
+const facebookLogin = new FacebookStrategy({
+        clientID: config.facebookAuth.clientID,
+        clientSecret: config.facebookAuth.clientSecret,
+        callbackURL: config.facebookAuth.callbackURL
+    },
+    function(accessToken, refreshToken, profile, done) {
+        process.nextTick(function() {
+            User.findOne({'facebook.id': profile.id}, function(err, user){
+                if(err)
+                    return done(err);
+                if(user)
+                    return done(null, user);
+                else {
+                    var newUser = new User();
+                    newUser.facebook.id = profile.id;
+                    newUser.facebook.token = accessToken;
+                    newUser.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
+                    newUser.facebook.email = profile.emails[0].value;
+
+                    newUser.save(function(err){
+                        if(err)
+                            throw err;
+                        return done(null, newUser);
+                    })
+                }
+            });
+        });
+    }
+);
 
 
-//Create local strategy
+// Create local strategy
 const localOptions = { usernameField: 'email' };
 const localLogin = new LocalStrategy(localOptions, function(email, password, done) {
     // Verify this email and password, call done with the user
@@ -55,3 +87,4 @@ const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
 // Tell passport to use this strategy
 passport.use(jwtLogin);
 passport.use(localLogin);
+passport.use(facebookLogin);
