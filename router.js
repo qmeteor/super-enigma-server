@@ -14,13 +14,16 @@ module.exports = function(app) {
        res.send({ message: 'Super secret code is ABC123'});
     });
     //send user to authentication controller when they visit this route
+
     app.post('/signin', requireSignin, Authentication.signin);
+
     app.post('/signup', Authentication.signup);
 
     app.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email']}));
 
-    app.get('/auth/facebook/callback',
-        passport.authenticate('facebook', { successRedirect: '/notifications',
-            failureRedirect: '/' }));
+    app.get('/auth/facebook/callback', passport.authenticate('facebook', {
+            successRedirect: '/notifications',
+            failureRedirect: '/'
+        }));
 };
 

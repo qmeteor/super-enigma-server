@@ -16,7 +16,7 @@ mongoose.connect('mongodb://localhost:auth/auth')
 
 // App Setup
 app.use(morgan('combined'));
-app.use(cors()); //TODO: this should be reviewed for security
+app.use(cors()); //TODO: this should be reviewed for security features to add.
 app.use(bodyParser.json({ type: '*/*' }));
 router(app);
 

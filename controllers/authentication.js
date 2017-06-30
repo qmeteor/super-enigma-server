@@ -27,8 +27,10 @@ exports.signup = function(req, res, next) {
         return res.status(422).send({ error: 'You must provide first name, last name, email and password!' })
     }
     // See if a user with a given email exists
-    User.findOne({ email: email }, function(err, existingUser) {
-        if(err) { return next(err); } //database fail
+    User.findOne({ "local.email": email }, function(err, existingUser) {
+        if(err) {
+            console.log('INTERNAL ERROR');
+            return next(err); } //database fail
 
         // If a user with email does exist, return an error
         if(existingUser) {
@@ -36,15 +38,18 @@ exports.signup = function(req, res, next) {
         }
 
         // If a user with email does NOT exist, create and save user record generate unique vanity URL id.
-        const user = new User({
-            username: firstName + ' ' + lastName,
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            password: password,
-            vanityURL: shortid.generate(),
-            profileImageURL: null
-        });
+        const user = new User(
+            {
+                local: {
+                    name: firstName + ' ' + lastName,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    password: password,
+                    vanityURL: shortid.generate(),
+                    profileImageURL: null
+                }
+            });
 
         user.save(function(err) {
             if(err) { return next(err); }

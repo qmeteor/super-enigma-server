@@ -9,19 +9,25 @@ const bcrypt = require('bcrypt-nodejs');
 // Define our model
 const userSchema = new Schema({
     local: {
-        username: String,  //username is constructed of first and last name but can be mutated to be anything after signup.
-        firstName: String,
-        lastName: String,
-        email: {type: String, unique: true, lowercase: true},
-        password: String,
-        vanityURL: {type: String, unique: true, lowercase: true},
+        name: String,  //username is constructed of first and last name but can be mutated to be anything after signup.
+        firstName: {type: String, require: true},
+        lastName: {type: String, require: true},
+        email: {type: String, require: true, unique: true, lowercase: true},
+        password: {type: String, require: true},
+        vanityURL: {type: String, require: true, unique: true, lowercase: true},
         profileImageURL: String
     },
     facebook: {
         id: String,
         token: String,
         email: String,
-        name: String
+        name: String,
+        age_range: String,
+        gender: String,
+        locale: String,
+        timezone: String,
+        verified: String,
+        user_friends: Object
     }
 });
 
@@ -47,7 +53,7 @@ userSchema.pre('save', function(next) {
 });
 
 userSchema.methods.comparePassword = function(candidatePassword, callback) {
-    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    bcrypt.compare(candidatePassword, this.local.password, function(err, isMatch) {
         if(err) { return callback(err); }
 
         callback(null, isMatch);
