@@ -26,8 +26,7 @@ const userSchema = new Schema({
         gender: String,
         locale: String,
         timezone: String,
-        verified: String,
-        user_friends: Object
+        verified: String
     }
 });
 

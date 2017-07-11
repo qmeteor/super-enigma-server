@@ -12,7 +12,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 // DB Setup
-mongoose.connect('mongodb://localhost:auth/auth')
+mongoose.connect('mongodb://localhost:auth/auth');
 
 // App Setup
 app.use(morgan('combined'));
@@ -20,8 +20,13 @@ app.use(cors()); //TODO: this should be reviewed for security features to add.
 app.use(bodyParser.json({ type: '*/*' }));
 router(app);
 
+// Client setup - for monitoring and displaying api server metrics
+app.use(express.static('public'));
+
 // Server Setup
 const port = process.env.PORT || 3090;
 const server = http.createServer(app);
 server.listen(port);
 console.log('Server Listening on:', port);
+
+

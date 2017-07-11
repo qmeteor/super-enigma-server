@@ -29,7 +29,6 @@ exports.signup = function(req, res, next) {
     // See if a user with a given email exists
     User.findOne({ "local.email": email }, function(err, existingUser) {
         if(err) {
-            console.log('INTERNAL ERROR');
             return next(err); } //database fail
 
         // If a user with email does exist, return an error

@@ -13,16 +13,23 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const facebookLogin = new FacebookStrategy({
         clientID: config.facebookAuth.clientID,
         clientSecret: config.facebookAuth.clientSecret,
-        callbackURL: config.facebookAuth.callbackURL
+        callbackURL: config.facebookAuth.callbackURL,
+        profileFields: ['emails']
     },
-    function(accessToken, refreshToken, profile, done) {
+    // facebook will send back the token and profile
+    function(req, accessToken, refreshToken, profile, done) {
         process.nextTick(function() {
             User.findOne({'facebook.id': profile.id}, function(err, user){
                 if(err)
+                    // error
+                    console.log('1111111');
                     return done(err);
                 if(user)
+                    // no error match found
                     return done(null, user);
                 else {
+                    // no error no match, create new fb user.
+                    console.log('33333333');
                     var newUser = new User();
                     newUser.facebook.id = profile.id;
                     newUser.facebook.token = accessToken;
@@ -33,13 +40,6 @@ const facebookLogin = new FacebookStrategy({
                     newUser.facebook.locale = profile.locale;
                     newUser.facebook.timezone = profile.timezone;
                     newUser.facebook.verified = profile.verified;
-                    newUser.facebook.user_friends = profile.user_friends;
-                    // age_range: String,
-                    //     gender: String,
-                    //     locale: String,
-                    //     timezone: String,
-                    //     verified: String,
-                    //     user_friends: Object
 
                     newUser.save(function(err){
                         if(err)
