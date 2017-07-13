@@ -22,14 +22,12 @@ const facebookLogin = new FacebookStrategy({
             User.findOne({'facebook.id': profile.id}, function(err, user){
                 if(err)
                     // error
-                    console.log('1111111');
                     return done(err);
                 if(user)
                     // no error match found
                     return done(null, user);
                 else {
                     // no error no match, create new fb user.
-                    console.log('33333333');
                     var newUser = new User();
                     newUser.facebook.id = profile.id;
                     newUser.facebook.token = accessToken;

@@ -5,7 +5,7 @@ const Authentication = require('./controllers/authentication');
 const passportService = require('./services/passport');
 const passport = require('passport');
 
-const requireAuth = passport.authenticate('jwt', { session: false });
+const requireAuth = passport.authenticate('jwt', { session: false });  // session:false -> cookieless cuz we using tokens
 const requireSignin = passport.authenticate('local', { session: false });
 const requireFacebookSignin = passport.authenticate('facebook', {scope: ['email']});
 
